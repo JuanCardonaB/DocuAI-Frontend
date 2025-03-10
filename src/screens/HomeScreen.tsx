@@ -6,7 +6,7 @@ import "../customStyles/customScrollbar.css";
 
 export const HomeScreen = () => {
   const { theme } = useContext(ThemeContext);
-  const { file } = useContext(FileContext);
+  const { file, setFile } = useContext(FileContext);
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -41,7 +41,7 @@ export const HomeScreen = () => {
       </div>
       {!file && <UploadButton />}
       {file && (
-        <div className="flex flex-col gap-2.5 items-end bg-[#333] rounded-md p-5">
+        <div className="flex flex-col gap-2.5 bg-[#333] rounded-md p-5">
           <textarea
             placeholder="Make a question..."
             ref={textareaRef}
@@ -51,11 +51,22 @@ export const HomeScreen = () => {
             rows={1}
             style={{ minHeight: "40px", maxHeight: "400px" }}
           />
-          <button className="cursor-pointer">
-            <div>
-              <img src="send.svg" alt="arrow-right" className="w-6 h-6 " />
-            </div>
-          </button>
+          <div className="flex flex-row justify-between items-center">
+            <button
+              className="cursor-pointer"
+              onClick={() => {
+                setText("");
+                setFile(null);
+              }}
+            >
+              <p>Clear Files</p>
+            </button>
+            <button className="cursor-pointer">
+              <div>
+                <img src="send.svg" alt="arrow-right" className="w-6 h-6 " />
+              </div>
+            </button>
+          </div>
         </div>
       )}
     </main>
