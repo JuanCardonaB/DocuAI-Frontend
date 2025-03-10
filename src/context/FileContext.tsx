@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState } from "react";
+import { UploadFile } from "../config/DataApp";
 
 interface FileContextType {
   file: File | null;
@@ -30,6 +31,8 @@ export function FileContextProvider({
       }
       console.log("Uploading file:", file.name);
       setFile(file);
+      const resUploadFile = await UploadFile({ fileData: file });
+      console.log(resUploadFile);
     }
   };
 
