@@ -3,12 +3,18 @@ import { UploadButton } from "../components/UploadButton";
 import { ThemeContext } from "../context/ThemeContext";
 import { FileContext } from "../context/FileContext";
 import "../customStyles/customScrollbar.css";
+import { AskQuestion } from "../config/DataApp";
+import { LoadingScreen } from "../components/LoadingScreen";
 
 export const HomeScreen = () => {
   const { theme } = useContext(ThemeContext);
   const { file, setFile } = useContext(FileContext);
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState(
+    "Colombia cuenta con más de 50 millones de habitantes, según la información proporcionada en el texto. Este dato destaca su población densa y urbana, especialmente evidente en ciudades como Bogotá, Medellín, Cartagena y Cali. La alta concentración poblacional ha sido un factor que impulsa tanto el desarrollo económico de la nación a través del turismo y las exportaciones agrícolas, como también presenta desafíos en términos de seguridad e infraestructura urbana. Sin embargo, Colombia está progresando para ofrecer una vida mejor a sus ciudadanos mediante inversiones significativas en educación y bienes raíces residenciales y comerciales."
+  );
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -17,8 +23,18 @@ export const HomeScreen = () => {
     }
   }, [text]);
 
+  const HandleSubmit = async () => {
+    setLoading(true);
+    const res = await AskQuestion({ prompt: text });
+    const data = res.data?.prompt;
+    console.log(data);
+    setResponse(data);
+    setLoading(false);
+  };
+
   return (
     <main className="w-[70%] h-screen justify-center items-center flex flex-col">
+      {loading && <LoadingScreen />}
       <div className="flex flex-col justify-center items-center gap-2.5 mb-10">
         <h1
           className={`${
@@ -57,16 +73,23 @@ export const HomeScreen = () => {
               onClick={() => {
                 setText("");
                 setFile(null);
+                setLoading(false);
+                setResponse("");
               }}
             >
               <p>Clear Files</p>
             </button>
-            <button className="cursor-pointer">
+            <button onClick={() => HandleSubmit()} className="cursor-pointer">
               <div>
                 <img src="send.svg" alt="arrow-right" className="w-6 h-6 " />
               </div>
             </button>
           </div>
+        </div>
+      )}
+      {response && (
+        <div className="flex flex-col gap-2.5 bg-[#333] rounded-md p-5 mt-10">
+          <p className="text-white">{response}</p>
         </div>
       )}
     </main>
